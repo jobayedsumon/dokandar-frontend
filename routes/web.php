@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'homepage']);
+Route::get('/vendor/{id}/available-store/{ui_type}', [HomeController::class, 'available_store'])->name('available-store');
+Route::get('/vendor/{id}/categories', [HomeController::class, 'categories'])->name('categories');
+Route::get('/categories/{id}/products', [HomeController::class, 'products'])->name('products');
+Route::get('/subcategory/{subId}/product/{prodId}', [HomeController::class, 'product_details'])->name('product-details');
+Route::post('/product-action/{id}', [HomeController::class, 'product_action'])->name('product-action');

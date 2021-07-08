@@ -88,8 +88,17 @@ $parcel_after_order_reward_msg = $baseUrl . "parcel_after_order_reward_msg";
 $parcel_user_ongoing_order = $baseUrl . "parcel_user_ongoing_order";
 $parcel_user_cancel_order = $baseUrl . "parcel_user_cancel_order";
 $parcel_user_completed_order = $baseUrl . "parcel_user_completed_order";
-
 $appname = "Dokandar";
+
+function baseUrl($data = ''): string
+{
+    return "http://103.108.140.52/~dokandar/api/" . $data;
+}
+
+function imageBaseUrl($data = ''): string
+{
+    return "http://103.108.140.52/~dokandar/" . $data;
+}
 
 
 ?>
