@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'homepage']);
+Route::get('/', [HomeController::class, 'homepage'])->name('homepage');
 Route::get('/cart', [HomeController::class, 'cart'])->name('cart');
 Route::get('/cart/{id}', [HomeController::class, 'remove_cart'])->name('remove-cart');
 

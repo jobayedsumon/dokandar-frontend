@@ -92,12 +92,12 @@ $appname = "Dokandar";
 
 function baseUrl($data = ''): string
 {
-    return "http://103.108.140.52/~dokandar/api/" . $data;
+    return "http://103.108.140.52/~dokandar/backend/api/" . $data;
 }
 
 function imageBaseUrl($data = ''): string
 {
-    return "http://103.108.140.52/~dokandar/" . $data;
+    return "http://103.108.140.52/~dokandar/backend/" . $data;
 }
 
 

@@ -5,7 +5,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-4 d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
-                    <a href="/" class="ms-md-2">
+                    <a href="{{ route('homepage') }}" class="ms-md-2">
                         <img src="{{ asset('images/logos/logo_user.png') }}" class="img img-fluid" width="100px" />
                     </a>
                 </div>
