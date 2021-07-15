@@ -19,28 +19,30 @@
     </div>
 
 
-
+<div class="container">
     <div class="row">
 
-            @forelse($data['vendorCategory'] as $vendorCategory)
-                <div class="col-md-6 col-lg-4 col-sm-12 column">
-                    <div class="card">
-                        <div class="txt">
-                            <h1>{{ $vendorCategory['category_name'] }}</h1>
-                            <p>See available stores</p>
-                        </div>
-                        <a href="{{ route('available-store', [$vendorCategory['vendor_category_id'], $vendorCategory['ui_type']]) }}">Click Here</a>
-                        <div class="ico-card">
-                            <img src="{{ imageBaseUrl($vendorCategory['category_image']) }}" alt="">
-                        </div>
+        @forelse($data['vendorCategory'] as $vendorCategory)
+            <div class="col-md-6 col-lg-6 col-sm-12 column">
+                <div class="card">
+                    <div class="txt">
+                        <h1>{{ $vendorCategory['category_name'] }}</h1>
+                        <p>See available stores</p>
+                    </div>
+                    <a href="{{ route('available-store', [$vendorCategory['vendor_category_id'], $vendorCategory['ui_type']]) }}">Click Here</a>
+                    <div class="ico-card">
+                        <img src="{{ imageBaseUrl($vendorCategory['category_image']) }}" alt="">
                     </div>
                 </div>
-            @empty
-            @endforelse
+            </div>
+        @empty
+        @endforelse
 
 
-        </div>
     </div>
+</div>
+</div>
+
 
     <div>
         @include('includes.footer')

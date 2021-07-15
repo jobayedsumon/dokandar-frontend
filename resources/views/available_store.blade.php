@@ -19,6 +19,15 @@
 
         <h1 class="title">Total {{ count($data['availableStore']) }} store(s) found.</h1>
 
+        @if(session()->has('msg'))
+            <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                {{ session()->get('msg') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+
         <div class="row">
 
 

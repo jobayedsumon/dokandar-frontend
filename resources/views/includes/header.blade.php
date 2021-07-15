@@ -21,9 +21,9 @@
                     <ul class="d-flex align-items-center">
                         <!-- Cart -->
                         <li class="nav-item">
-                            <a class="text-reset me-3" href="#">
+                            <a class="text-reset me-3" href="{{ route('cart') }}">
                                 <span><i class="fa fa-shopping-cart"></i></span>
-                                <span class="badge rounded-pill badge-notification bg-danger">{{ count(session()->get('cart')) }}</span>
+                                <span class="badge rounded-pill badge-notification bg-danger">{{ count(session()->get('cart') ?? []) }}</span>
                             </a>
                         </li>
 
@@ -39,8 +39,17 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i></a>
                             <div class="dropdown-menu dropdown-menu-right dropdown-cyan" aria-labelledby="navbarDropdownMenuLink-4">
-                                <a class="dropdown-item" href="#">Facebook</a>
-                                <a class="dropdown-item" href="#">Instagram</a>
+                                @auth
+                                    <a class="dropdown-item" href="{{ route('my-account') }}">My Account</a>
+                                    <a class="dropdown-item" href="{{ route('logout') }}">Logout</a>
+                                @endauth
+
+                                @guest
+                                        <a class="dropdown-item" href="{{ route('login') }}">Login</a>
+                                        <a class="dropdown-item" href="{{ route('register') }}">Register</a>
+                                    @endguest
+
+
                             </div>
                         </li>
 

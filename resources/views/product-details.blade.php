@@ -39,13 +39,13 @@
                         </div>
                         <div class="col-lg-6 order-3">
                             <div class="product_description">
-                                <nav>
-                                    <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                        <li class="breadcrumb-item"><a href="#">Products</a></li>
-                                        <li class="breadcrumb-item active">Accessories</li>
-                                    </ol>
-                                </nav>
+{{--                                <nav>--}}
+{{--                                    <ol class="breadcrumb">--}}
+{{--                                        <li class="breadcrumb-item"><a href="#">Home</a></li>--}}
+{{--                                        <li class="breadcrumb-item"><a href="#">Products</a></li>--}}
+{{--                                        <li class="breadcrumb-item active">Accessories</li>--}}
+{{--                                    </ol>--}}
+{{--                                </nav>--}}
                                 <div class="product_name">{{ $product->product_name }}</div>
                                 @php
                                     if ($product_variant) {
@@ -109,8 +109,8 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-6 form-inline">
-                                            <button type="submit" name="action" value="1" class="btn btn-primary shop-button">Add to Cart</button>
-                                            <button type="submit" name="action" value="2" class="btn btn-success shop-button">Buy Now</button>
+                                            <button type="submit" name="action" value="1" class="btn btn-danger shop-button">Add to Cart</button>
+                                            <button type="submit" name="action" value="2" class="btn shop-button" style="background-color: #232F3E">Buy Now</button>
                                         </div>
                                     </div>
                                 </form>

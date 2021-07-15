@@ -19,8 +19,8 @@
     </div>
 
 
-
-    <div class="row">
+    <div class="container">
+        <div class="row">
 
             @forelse($data['categories'] as $category)
                 <div class="col-md-6 col-lg-4 col-sm-12 column">
@@ -41,6 +41,9 @@
 
         </div>
     </div>
+    </div>
+
+
 
     <div>
         @include('includes.footer')
