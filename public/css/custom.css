@@ -204,11 +204,11 @@ table th {
     margin-left: 1rem;
 }
 .column:hover .card .txt h1, .column:hover .card .txt p {
-    color: rgba(255, 255, 255, 1);
+    color: #fff;
     opacity: 1;
 }
 .column:hover a {
-    color: rgba(255, 255, 255, 1);
+    color: #fff;
 }
 .column:hover img {
     opacity: 1.0;
@@ -217,8 +217,25 @@ table th {
 .column:hover a:after {
     width: 10%;
 }
+
+.column .column-overlay {
+    background: rgba(0,0,0,0.3);
+    position: absolute;
+    height: 99%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    opacity: 0;
+}
+
+.column:hover .column-overlay{
+    opacity: 1;
+}
+
 .card {
-    min-height: 170px;
+    min-height: 300px;
     margin: 0;
     padding: 1.7rem 1.2rem;
     border: none;
@@ -277,7 +294,7 @@ table th {
 }
 .card img {
     opacity: 0.9;
-    /*z-index: 0;*/
+    max-height: 250px;
 }
 
 .owl-carousel .owl-wrapper {
@@ -767,6 +784,17 @@ a {
     border-radius: 5px;
     color: #fff;
     font-size: 16px;
+    margin-top: 20px;
+}
+
+.dashboard-list .nav-link {
+    background-color: #ff3547;
+    color: #fff;
+}
+
+.dashboard-list .nav-link:hover, .dashboard-list .nav-link.active {
+    background-color: #fff;
+    color: #ff3547;
 }
 
 .order_info {

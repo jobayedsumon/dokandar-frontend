@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class UserController extends Controller
 {
@@ -16,7 +17,6 @@ class UserController extends Controller
             ->join('vendor','orders.vendor_id','=','vendor.vendor_id')
             ->join('user_address','orders.address_id','=','user_address.address_id')
             ->where('orders.user_id',$user_id)
-            ->where('orders.ui_type', '1')
             ->where('orders.payment_method', '!=', NULL)
             ->orderBy('orders.order_id', 'DESC')
             ->get();
@@ -39,6 +39,30 @@ class UserController extends Controller
             $data=array('data'=>[]);
         }
 
-        return view('my-account', compact('data'));
+        $response = Http::post(baseUrl('show_address'), [
+            'user_id' => auth()->id()
+        ]);
+        $address_list = $response->ok() ? $response->json('data') : [];
+
+        return view('my-account', compact('data', 'address_list'));
+    }
+
+    public function add_address(Request $request)
+    {
+        $data = $request->except('_token');
+        $data['user_id'] = auth()->id();
+        $data['user_name'] = auth()->user()->user_name;
+        $data['user_number'] = auth()->user()->user_phone;
+
+        $response = Http::post(baseUrl('add_address'), $data);
+        return $response->ok() ? redirect()->back()->with('msg', 'Address added successfully') : redirect()->back()->with('msg', 'Address couldn\'t be added');
+    }
+
+    public function delete_address($id)
+    {
+        $response = Http::post(baseUrl('remove_address'), [
+            'address_id' => $id
+        ]);
+        return $response->ok() ? redirect()->back()->with('msg', $response->json('message')) : redirect()->back()->with('msg', 'Address couldn\'t be deleted');
     }
 }

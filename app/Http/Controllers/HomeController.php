@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -22,63 +23,38 @@ class HomeController extends Controller
         return view('homepage', compact('data'));
     }
 
-    public function available_store($id, $ui_type)
+    public function available_store($vendor_cat_id, $ui_type)
     {
-        $vendorCategory = DB::table('vendor_category')->where('vendor_category_id', $id)->first();
+        $vendorCategory = DB::table('vendor_category')->where('vendor_category_id', $vendor_cat_id)->first();
 
         $response = Http::post(baseUrl('nearbystore'), [
-            'vendor_category_id' => $id,
+            'vendor_category_id' => $vendor_cat_id,
             'ui_type' => $ui_type
         ]);
         $availableStore = $response->ok() ? $response->json('data') : [];
+
         $data['availableStore'] = $availableStore;
         $data['vendorCategory'] = $vendorCategory;
 
         return view('available_store', compact('data'));
     }
 
-    public function categories($id)
+    public function vendor_type($vendor_id, $ui_type)
     {
-        if (session()->has('cart')) {
-            return redirect()->back()->with('msg', 'Can not order from multiple vendor. Please clear previous cart to order.');
-        } else {
-            session()->put('vendor_id', $id);
+        session()->put('vendor_id', $vendor_id);
 
-            $response = Http::post(baseUrl('vendorbanner'), [
-                'vendor_id' => $id
-            ]);
-            $vendorBanner = $response->ok() ? $response->json('data') : [];
-            $data['vendorBanner'] = $vendorBanner;
-
-            $response = Http::post(baseUrl('appcategory'), [
-                'vendor_id' => $id
-            ]);
-            $categories = $response->ok() ? $response->json('data') : [];
-            $data['categories'] = $categories;
-
-            return view('categories', compact('data'));
+        if ($ui_type == 1) {
+            return redirect(route('grocery-categories', $vendor_id));
+        } elseif ($ui_type == 2) {
+            return redirect(route('restaurant-products', $vendor_id));
+        } elseif ($ui_type == 3) {
+            return redirect(route('pharmacy-products', $vendor_id));
         }
+
 
     }
 
-    public function products($id)
-    {
 
-        $response = Http::post(baseUrl('appsubcategory'), [
-            'category_id' => $id
-        ]);
-        $subCategories = $response->ok() ? $response->json('data') : [];
-        foreach ($subCategories as $index => $subCategory) {
-            $response = Http::post(baseUrl('appproduct'), [
-                'subcat_id' => $subCategory['subcat_id']
-            ]);
-            $products = $response->ok() ? $response->json() : [];
-            $subCategories[$index]['products'] = $products;
-        }
-        $data['subCategories'] = $subCategories;
-
-        return view('products', compact('data'));
-    }
 
     public function product_details($subId, $prodId)
     {
@@ -88,12 +64,12 @@ class HomeController extends Controller
         return view('product-details', compact('product', 'product_variant'));
     }
 
-    public function product_action(Request $request, $id)
+    public function product_action(Request $request, $prodId)
     {
         $cart = session()->get('cart');
         $cart[] = array(
             'cart_id' => uniqid(),
-            'product_id' => $id,
+            'product_id' => $prodId,
             'variant_id' => $request->variant,
             'qty' => $request->qty,
         );
@@ -146,30 +122,54 @@ class HomeController extends Controller
         ]);
         $address_list = $response->ok() ? $response->json('data') : [];
 
-        return view('checkout', compact('cartDetails', 'address_list'));
+        $response = Http::post(baseUrl('city'), [
+            'vendor_id' => $cartDetails[0]['product']->vendor_id
+        ]);
+
+        $city_list = $response->ok() ? $response->json('data') : [];
+
+        $checkmap = DB::table('map_API')
+            ->first();
+
+        $minDate = date('Y-m-d');
+        $maxDate = date('Y-m-d', strtotime($minDate.'+9 days'));
+
+        return view('checkout', compact('cartDetails', 'address_list', 'city_list', 'checkmap', 'minDate', 'maxDate'));
     }
 
     public function order(Request $request)
     {
-        $cart = session()->get('cart');
-        $data = [];
-
-        foreach ($cart as $c) {
-            array_push($data, [
-                'qty' => $c['qty'],
-                'varient_id' => $c['variant_id']
-            ]);
-        }
-
-        $response = Http::post(baseUrl('order'), [
-            'user_id' => auth()->id(),
-            'vendor_id' => session()->get('vendor_id'),
-            'order_array' => json_encode($data)
+        $response = Http::post(baseUrl('select_address'), [
+           'address_id' => $request->address_id
         ]);
 
-        $order = $response->ok() ? $response->json('data') : [];
+        if ($response->ok()) {
 
-        return view('payment', compact('order'));
+            $cart = session()->get('cart');
+            $data = [];
+
+            foreach ($cart as $c) {
+                array_push($data, [
+                    'qty' => $c['qty'],
+                    'varient_id' => $c['variant_id']
+                ]);
+            }
+
+            $response = Http::post(baseUrl('order'), [
+                'user_id' => auth()->id(),
+                'vendor_id' => session()->get('vendor_id'),
+                'delivery_date' => $request->delivery_date,
+                'time_slot' => $request->time_slot,
+                'order_array' => json_encode($data)
+            ]);
+
+            $order = $response->ok() ? $response->json('data') : [];
+
+            return view('payment', compact('order'));
+
+        } else {
+            return redirect()->back()->with('msg', 'Address couldn\'t be selected');
+        }
 
     }
 

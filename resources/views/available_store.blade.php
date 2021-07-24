@@ -38,7 +38,7 @@
                             <h1>{{ $availableStore['vendor_name'] }}</h1>
                             <p>Delivery within {{ $availableStore['delivery_range'] }} KM from {{ $availableStore['vendor_loc'] }}</p>
                         </div>
-                        <a href="{{ route('categories', $availableStore['vendor_id']) }}">Click Here</a>
+                        <a href="{{ route('vendor-type', [$availableStore['vendor_id'], $data['vendorCategory']->ui_type]) }}">Click Here</a>
                         <div class="ico-card">
                             <img src="{{ imageBaseUrl($availableStore['vendor_logo']) }}" alt="">
                         </div>

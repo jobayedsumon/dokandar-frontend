@@ -29,7 +29,7 @@
                             <h1>{{ $category['category_name'] }}</h1>
                             <p>Explore products</p>
                         </div>
-                        <a href="{{ route('products', $category['category_id']) }}">Click Here</a>
+                        <a href="{{ route('grocery-products', [$category['vendor_id'], $category['category_id']]) }}">Click Here</a>
                         <div class="ico-card">
                             <img src="{{ imageBaseUrl($category['category_image']) }}" alt="">
                         </div>

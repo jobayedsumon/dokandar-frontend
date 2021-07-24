@@ -6,6 +6,18 @@
         @include('includes.header')
     </div>
 
+    <div class="">
+        <div class="owl-carousel">
+            @forelse($data['vendorBanner'] as $vendorBanner)
+                <div>
+                    <img src="{{ imageBaseUrl($vendorBanner['banner_image']) }}" alt="{{ $vendorBanner['banner_name'] }}">
+                    <h1 class="caption">{{ $vendorBanner['banner_name'] }}</h1>
+                </div>
+            @empty
+            @endforelse
+        </div>
+    </div>
+
     <div class="container">
 
         <section id="wrapper">
@@ -30,7 +42,7 @@
                                 <div class="col-md-4 mt-2">
                                     <div class="card">
                                         <div class="card-body">
-                                            <div class="card-img-actions"> <img src="{{ imageBaseUrl($product['products_image'] ?? '') }}" class="card-img img-fluid" width="96" height="350" alt=""> </div>
+                                            <div class="card-img-actions"> <img src="{{ imageBaseUrl($product['products_image'] ?? '') }}" class="card-img img-fluid" width="96" height="350" alt="Could not load image"> </div>
                                         </div>
                                         <div class="card-body bg-light text-center">
                                             <div class="mb-2">

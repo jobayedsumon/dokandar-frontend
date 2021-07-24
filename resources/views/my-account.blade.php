@@ -29,7 +29,7 @@
                                         <li> <a href="#orders" data-toggle="tab" class="nav-link">Orders</a></li>
                                         <li><a href="#address" data-toggle="tab" class="nav-link">Addresses</a></li>
                                         <li><a href="#account-details" data-toggle="tab" class="nav-link">Account details</a></li>
-                                        <li><a href="{{ route('logout') }}" class="nav-link">logout</a></li>
+                                        <li><a href="{{ route('logout') }}" class="nav-link">Logout</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -40,6 +40,7 @@
                                         <h3>Dashboard </h3>
                                         <p>From your account dashboard. you can easily check &amp; view your <a href="#orders">recent orders</a>, manage your <a href="#address">delivery addresses</a> and <a href="#account-details">Edit your password and account details.</a></p>
                                     </div>
+
                                     <div class="tab-pane fade" id="orders">
                                         <div class="table-responsive">
                                             <h1 class="text-xl my-3">You have total {{ count($data) }} order(s)</h1>
@@ -75,57 +76,24 @@
                                     </div>
 
 
-{{--                                    <div class="tab-pane" id="address">--}}
-{{--                                        <p>The following addresses will be used on the checkout page by default.</p>--}}
-{{--                                        <div class="checkout_form">--}}
-{{--                                            <div class="row">--}}
-{{--                                                <div class="col-lg-6 col-md-6">--}}
-{{--                                                    <h4 class="billing-address">Billing address</h4>--}}
-{{--                                                    <div class="row">--}}
-{{--                                                        <form action="{{ route('update-address') }}" method="POST">--}}
-{{--                                                            @csrf--}}
-{{--                                                            @method('PATCH')--}}
-{{--                                                            <div class="col-12 mb-20">--}}
-{{--                                                                <label for="division">Division <span>*</span></label>--}}
-{{--                                                                <select class="select_option" name="division" id="division">--}}
+                                    <div class="tab-pane fade" id="address">
 
-{{--                                                                    <option value="{{ $division ?? '' }}">{{ $division ?? '' }}</option>--}}
+                                        <p class="mb-2 text-lg">The following addresses will be used on the checkout page by default.</p>
+                                        <ul>
+                                            @forelse($address_list as $address_data)
+                                                <li>
 
-{{--                                                                    <option value="dhaka">Dhaka</option>--}}
-{{--                                                                    <option value="chittagong">Chittagong</option>--}}
-{{--                                                                    <option value="barisal">Barisal</option>--}}
-{{--                                                                    <option value="khulna">Khulna</option>--}}
-{{--                                                                    <option value="mymensingh">Mymensingh</option>--}}
-{{--                                                                    <option value="sylhet">Sylhet</option>--}}
-{{--                                                                    <option value="rangpur">Rangpur</option>--}}
+                                                    <div class="addressBox">
+                                                        {{ $address_data['address'] }}
+                                                        <a class="pull-right" href="{{ route('delete-address', $address_data['address_id']) }}"><i class="fa fa-trash text-white"></i></a>
+                                                    </div>
 
-{{--                                                                </select>--}}
-{{--                                                            </div>--}}
+                                                </li>
+                                            @empty
+                                            @endforelse
+                                        </ul>
+                                    </div>
 
-{{--                                                            <div class="col-12 mb-20">--}}
-{{--                                                                <label>District <span>*</span></label>--}}
-{{--                                                                <input type="text" name="district" value="{{ $district ?? '' }}">--}}
-{{--                                                            </div>--}}
-
-{{--                                                            <div class="col-12 mb-20">--}}
-{{--                                                                <label>Town / City <span>*</span></label>--}}
-{{--                                                                <input type="text" name="city" value="{{ $city ?? '' }}">--}}
-{{--                                                            </div>--}}
-
-{{--                                                            <div class="col-12 mb-20">--}}
-{{--                                                                <label>Street address  <span>*</span></label>--}}
-{{--                                                                <input name="street" placeholder="House number and street name" type="text" value="{{ $street ?? '' }}">--}}
-{{--                                                            </div>--}}
-
-{{--                                                            <button class="customButton py-2 px-6" style="border-radius: 5px" type="submit">Save</button>--}}
-
-{{--                                                        </form>--}}
-
-{{--                                                    </div>--}}
-{{--                                                </div>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
 {{--                                    <div class="tab-pane fade" id="account-details">--}}
 {{--                                        <h3>Account details </h3>--}}
 {{--                                        <div class="login">--}}

@@ -20,15 +20,23 @@
 
                 <div class="row">
                     <div class="col-6 order-md-1">
-                        <h3 class="mb-3 text-lg">Delivery Address</h3>
+                        <div class="d-flex align-items-baseline">
+                            <h3 class="mb-3 text-lg">Delivery Address</h3>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#addressModal">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+
+
                         <form action="{{ route('order') }}" method="POST">
                             @csrf
                             <ul>
                                 @forelse($address_list as $address_data)
-                                    <li>
+                                    <li class="mt-3">
 
                                         <div class="addressBox">
-                                            <input type="radio" name="address_id" value="{{ $address_data['address_id'] }}">
+                                            <input type="radio" required name="address_id" value="{{ $address_data['address_id'] }}">
                                             {{ $address_data['address'] }}
                                         </div>
 
@@ -36,6 +44,19 @@
                                 @empty
                                 @endforelse
                             </ul>
+
+                            <div class="form-group mt-4">
+                                <label for="dateSlots">Date Slots</label>
+                                <input required type="date" min="{{ $minDate }}" max="{{ $maxDate }}" name="delivery_date" id="dateSlots">
+                            </div>
+
+                            <div class="form-group mt-4">
+                                <label for="">Time Slots</label>
+                                <div id="timeSlots">
+
+                                </div>
+
+                            </div>
 
                             <button type="submit" class="btn btn-danger mt-5">Confirm Order</button>
                         </form>
@@ -72,6 +93,84 @@
 
 
 
+            <!-- Modal -->
+            <div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressModalLabel" aria-hidden="true">
+                <form action="{{ route('add-address') }}" method="POST">
+                    @csrf
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addressModalLabel">Add New Address</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <select class="form-control" required name="address_type">
+                                            <option value="">Select address type</option>
+                                            <option value="Home">Home</option>
+                                            <option value="Office">Office</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <select class="form-control" id="city" required name="city_id">
+                                            <option value="">Select city</option>
+                                            @forelse($city_list as $city)
+                                                <option value="{{ $city['city_id'] }}">{{ $city['city_name'] }}</option>
+                                            @empty
+                                            @endforelse
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <select class="form-control" id="area" required name="area_id">
+                                            <option value="">Select near by</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input placeholder="House no." name="houseno" type="text" class="form-control" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <input placeholder="Enter your pincode or zipcode" name="pin" type="text" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input placeholder="Enter your state" type="text" name="state" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <textarea name="street" placeholder="Enter your address line" class="form-control" required></textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <input type="hidden" name="lat">
+                                <input type="hidden" name="lng">
+                                <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger">Save changes</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+
+
+
 
     </div>
 
@@ -79,8 +178,44 @@
         @include('includes.footer')
     </div>
 
-    <script>
-        $('#payNowBtn').attr('disabled', 'disabled');
+
+
+@endsection
+
+@section('script')
+<script>
+
+    $(document).ready(function () {
+
+        navigator.geolocation.getCurrentPosition(success, error);
+
+        function success(position) {
+            $('input[name=lat]').val(position.coords.latitude);
+            $('input[name=lng]').val(position.coords.longitude);
+
+            var GEOCODING = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + position.coords.latitude + '%2C' + position.coords.longitude + '&language=en&key={{ $checkmap->map_api_key }}';
+            console.log(GEOCODING);
+            $.ajax({
+                url : GEOCODING,
+                type: "GET",
+                dataType: 'jsonp',
+                cache: false,
+                success: function(response, textStatus, jqXHR) {
+                    console.log(response);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+            });
+
+        }
+
+        function error(err) {
+            console.log(err)
+        }
+
         $('#codBtn').attr('disabled', 'disabled');
         $('#agree').click(function() {
             if ($(this).is(':checked')) {
@@ -91,8 +226,67 @@
                 $('#codBtn').attr('disabled', 'disabled');
             }
         });
-    </script>
+
+        $('#city').on('change', function () {
+
+            var data = {
+                city_id: $(this).val(),
+                vendor_id: {{ $cartDetails[0]['product']->vendor_id }}
+            }
+
+            $.ajax({
+                url : "/get-area-list",
+                type: "POST",
+                data : data,
+                success: function(response, textStatus, jqXHR) {
+                    console.log(response);
+                    $.each(response, function (index, item) {
+                        var option = new Option(item.area_name, item.area_id);
+                        $('#area').append($(option));
+                    });
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+            });
+
+        });
+
+        $('#dateSlots').on('change', function () {
+
+            var data = {
+                selected_date: $(this).val(),
+                vendor_id: {{ $cartDetails[0]['product']->vendor_id }}
+            }
+
+            $.ajax({
+                url : "/get-time-slots",
+                type: "POST",
+                data : data,
+                success: function(response, textStatus, jqXHR) {
+                    console.log(response);
+                    var slots = '';
+                    $.each(response, function (index, item) {
+                        slots += ' <input required type="radio" name="time_slot" value="'+item+'"> '+item;
+                    });
+                    $('#timeSlots').empty();
+                    $('#timeSlots').append(slots);
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+            });
+        });
 
 
 
+    });
+
+</script>
 @endsection
