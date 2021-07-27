@@ -4,6 +4,8 @@ $.ajaxSetup({
     }
 });
 
+var URL = 'https://103.108.140.52/~dokandar/frontend/public';
+
 $(document).ready(function(){
     $(".owl-carousel").owlCarousel({
         items: 1,

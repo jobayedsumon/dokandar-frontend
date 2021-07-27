@@ -96,7 +96,7 @@
                         $.each(response, function (index, item) {
 
                             var store = `<div class="col-md-6 col-lg-4 col-sm-12 column">
-                    <a href="/vendor/`+item.vendor_id+`/ui-type/{{ $data['vendorCategory']->ui_type }}/vendor-type">
+                    <a href="`+URL+`/vendor/`+item.vendor_id+`/ui-type/{{ $data['vendorCategory']->ui_type }}/vendor-type">
                     <div class="card">
                         <div class="txt">
                             <h1>`+item.vendor_name+`</h1>
