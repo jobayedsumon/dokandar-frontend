@@ -62,7 +62,7 @@
                                                     }
                                                 @endphp
                                                 <h3 class="mb-0 font-weight-semibold">BDT {{ $min == $max ? $min : $min.' - '.$max }}</h3>
-                                                <a href="{{ route('product-details', [$subCategory['subcat_id'], $product['product_id']]) }}" class="btn bg-cart">View Details</a>
+                                                <a href="{{ route('grocery-product-details', [$data['vendor_id'], $product['product_id']]) }}" class="btn bg-cart">View Details</a>
                                             </div>
                                         </div>
                                     </div>

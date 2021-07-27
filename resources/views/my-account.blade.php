@@ -53,7 +53,7 @@
                                                     <th>Order Status</th>
                                                     <th>Order Amount</th>
                                                     <th>Payment Method</th>
-                                                    <th>Action</th>
+{{--                                                    <th>Action</th>--}}
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -65,7 +65,7 @@
                                                         <td>{{ $order['order_status'] }}</td>
                                                         <td>BDT {{ $order['remaining_amount'] }}</td>
                                                         <td>{{ $order['payment_method'] }}</td>
-                                                        <td><a class="btn btn-danger" href="">Details</a></td>
+{{--                                                        <td><a class="btn btn-danger" href="">Details</a></td>--}}
                                                     </tr>
                                                 @empty
                                                 @endforelse

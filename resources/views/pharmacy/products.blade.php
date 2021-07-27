@@ -51,7 +51,7 @@
                                                     }
                                                 @endphp
                                                 <h3 class="mb-0 font-weight-semibold">BDT {{ $min == $max ? $min : $min.' - '.$max }}</h3>
-                                                <a href="{{ route('product-details', [reset($pharmacyCat)['resturant_cat_id'], $product['product_id'] ?? -1]) }}" class="btn bg-cart">View Details</a>
+                                                <a href="{{ route('pharmacy-product-details', [$data['vendor_id'], $product['product_id'] ?? -1]) }}" class="btn bg-cart">View Details</a>
                                             </div>
                                         </div>
                                     </div>

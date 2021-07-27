@@ -74,15 +74,32 @@
                                 <div>
                                     <h6 class="my-0">{{ $c['product']->product_name }}</h6>
                                     <small class="text-muted">(BDT {{ $c['variant']->price }} / {{ $c['variant']->quantity }} {{ $c['variant']->unit }}) x {{ $c['qty'] }}</small>
+
+                                    @php $total_addon_price = 0; @endphp
+                                    @forelse($c['addons'] as $addon)
+                                        @php $total_addon_price += $addon->addon_price; @endphp
+                                        <br>
+                                        <small class="text-muted">
+                                            {{ $addon->addon_name . ' - BDT ' . $addon->addon_price }}
+                                        </small>
+                                    @empty
+                                    @endforelse
                                 </div>
                                 @php
                                     $total = $c['qty'] * $c['variant']->price;
-                                    $sub_total += $total;
+                                    $sub_total += ($total + $total_addon_price);
                                 @endphp
-                                <span class="">BDT {{ $total }}</span>
+                                <span class="">BDT {{ $total + $total_addon_price }}</span>
                             </li>
                             @empty
                             @endforelse
+
+                            <li class="list-group-item d-flex justify-content-between lh-condensed">
+                                <h3 class="text-lg text-danger">Sub Total</h3>
+                                <h3 class="text-lg text-danger">BDT {{ $sub_total }}</h3>
+                            </li>
+
+                        </ul>
 
 
                     </div>

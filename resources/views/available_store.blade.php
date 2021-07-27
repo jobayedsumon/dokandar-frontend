@@ -9,7 +9,7 @@
     <div class="">
         <div class="jumbotron jumbotron-fluid" style="background-image: url('{{ imageBaseUrl($data["vendorCategory"]->category_image) }}')">
             <div class="container">
-                <h1 class="display-4">{{ $data['vendorCategory']->category_name }}</h1>
+                <h1 class="display-4 text-danger">{{ $data['vendorCategory']->category_name }}</h1>
             </div>
         </div>
     </div>
@@ -33,16 +33,19 @@
 
             @forelse($data['availableStore'] as $availableStore)
                 <div class="col-md-6 col-lg-4 col-sm-12 column">
+                    <a href="{{ route('vendor-type', [$availableStore['vendor_id'], $data['vendorCategory']->ui_type]) }}">
                     <div class="card">
                         <div class="txt">
                             <h1>{{ $availableStore['vendor_name'] }}</h1>
                             <p>Delivery within {{ $availableStore['delivery_range'] }} KM from {{ $availableStore['vendor_loc'] }}</p>
                         </div>
-                        <a href="{{ route('vendor-type', [$availableStore['vendor_id'], $data['vendorCategory']->ui_type]) }}">Click Here</a>
+
                         <div class="ico-card">
+                            <div class="column-overlay"></div>
                             <img src="{{ imageBaseUrl($availableStore['vendor_logo']) }}" alt="">
                         </div>
                     </div>
+                    </a>
                 </div>
             @empty
             @endforelse

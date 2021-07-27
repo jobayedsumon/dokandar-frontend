@@ -196,6 +196,12 @@ table th {
 .column {
     margin-top: 3rem;
     padding-left: 3rem;
+    display: flex;
+    justify-content: center;
+}
+.column .card {
+    height: 300px;
+    width: 300px;
 }
 .column:hover {
     padding-left: 0;
@@ -349,7 +355,7 @@ table th {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    height: 50vh;
+    height: 60vh;
 }
 
 .title {

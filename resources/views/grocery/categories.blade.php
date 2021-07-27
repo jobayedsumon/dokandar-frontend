@@ -24,16 +24,18 @@
 
             @forelse($data['categories'] as $category)
                 <div class="col-md-6 col-lg-4 col-sm-12 column">
+                    <a href="{{ route('grocery-products', [$category['vendor_id'], $category['category_id']]) }}">
                     <div class="card">
                         <div class="txt">
                             <h1>{{ $category['category_name'] }}</h1>
                             <p>Explore products</p>
                         </div>
-                        <a href="{{ route('grocery-products', [$category['vendor_id'], $category['category_id']]) }}">Click Here</a>
                         <div class="ico-card">
+                            <div class="column-overlay"></div>
                             <img src="{{ imageBaseUrl($category['category_image']) }}" alt="">
                         </div>
                     </div>
+                    </a>
                 </div>
             @empty
             @endforelse

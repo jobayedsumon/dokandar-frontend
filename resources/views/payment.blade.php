@@ -62,7 +62,7 @@
                             </li>
                             <li class="list-group-item d-flex justify-content-between text-xl text-danger">
                                 <span>Payable Amount</span>
-                                <strong>BDT {{ $order['rem_price'] }}</strong>
+                                <strong>BDT {{ $order['total_price'] }}</strong>
                             </li>
                         </ul>
 

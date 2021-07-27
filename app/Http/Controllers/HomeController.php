@@ -41,7 +41,6 @@ class HomeController extends Controller
 
     public function vendor_type($vendor_id, $ui_type)
     {
-        session()->put('vendor_id', $vendor_id);
 
         if ($ui_type == 1) {
             return redirect(route('grocery-categories', $vendor_id));
@@ -54,26 +53,24 @@ class HomeController extends Controller
 
     }
 
-
-
-    public function product_details($subId, $prodId)
+    public function product_action(Request $request, $vendor_id, $prodId)
     {
-        $product = DB::table('product')->where('subcat_id', $subId)->where('product_id', $prodId)->first();
-        $product_variant = DB::table('product_varient')->where('product_id', $prodId)->get();
-
-        return view('product-details', compact('product', 'product_variant'));
-    }
-
-    public function product_action(Request $request, $prodId)
-    {
+        if (session()->has('vendor_id')) {
+            if (session()->get('vendor_id') != $vendor_id) {
+                return redirect()->back()->with('msg', 'Multiple vendors product can\'t be added to the cart.');
+            }
+        }
         $cart = session()->get('cart');
         $cart[] = array(
             'cart_id' => uniqid(),
             'product_id' => $prodId,
             'variant_id' => $request->variant,
+            'addons_id' => $request->addons,
             'qty' => $request->qty,
         );
+
         session()->put('cart', $cart);
+        session()->put('vendor_id', $vendor_id);
 
         if ($request->action == 1) {
             return redirect()->back()->with('msg', 'Product added to cart successfully');
@@ -85,11 +82,34 @@ class HomeController extends Controller
     public function cart()
     {
         $cartDetails = session()->get('cart') ?? [];
+        $vendor_id = session()->get('vendor_id') ?? null;
 
-        foreach ($cartDetails as $i=>$c) {
-            $c['product'] = DB::table('product')->where('product_id', $c['product_id'])->first();
-            $c['variant'] = DB::table('product_varient')->where('varient_id', $c['variant_id'])->first();
-            $cartDetails[$i] = $c;
+        if ($vendor_id) {
+
+            $vendor = DB::table('vendor')->select('ui_type')->where('vendor_id', $vendor_id)->first();
+
+            if ($vendor->ui_type == 1) {
+                foreach ($cartDetails as $i=>$c) {
+                    $c['product'] = DB::table('product')->where('product_id', $c['product_id'])->first();
+                    $c['variant'] = DB::table('product_varient')->where('varient_id', $c['variant_id'])->first();
+                    $cartDetails[$i] = $c;
+                }
+            } elseif ($vendor->ui_type == 2 || $vendor->ui_type == 3) {
+                foreach ($cartDetails as $i=>$c) {
+                    $c['product'] = DB::table('resturant_product')->where('product_id', $c['product_id'])->first();
+                    $c['variant'] = DB::table('resturant_variant')->where('variant_id', $c['variant_id'])->first();
+                    if ($c['addons_id']) {
+                        $c['addons'] = DB::table('restaurant_addons')->whereIn('addon_id', $c['addons_id'])->get();
+                    } else {
+                        $c['addons'] = [];
+                    }
+
+                    $cartDetails[$i] = $c;
+                }
+            } elseif ($vendor->ui_type == 4) {
+                return redirect('/');
+            }
+
         }
 
         return view('cart', compact('cartDetails'));
@@ -103,6 +123,9 @@ class HomeController extends Controller
                 unset($cart[$i]);
             }
         }
+        if (count($cart) <= 0) {
+            session()->remove('vendor_id');
+        }
         session()->put('cart', $cart);
         return redirect()->back()->with('msg', 'Item removed from cart');
     }
@@ -110,11 +133,33 @@ class HomeController extends Controller
     public function checkout()
     {
         $cartDetails = session()->get('cart') ?? [];
+        $vendor_id = session()->get('vendor_id') ?? null;
 
-        foreach ($cartDetails as $i=>$c) {
-            $c['product'] = DB::table('product')->where('product_id', $c['product_id'])->first();
-            $c['variant'] = DB::table('product_varient')->where('varient_id', $c['variant_id'])->first();
-            $cartDetails[$i] = $c;
+        if ($vendor_id) {
+
+            $vendor = DB::table('vendor')->select('ui_type')->where('vendor_id', $vendor_id)->first();
+
+            if ($vendor->ui_type == 1) {
+                foreach ($cartDetails as $i=>$c) {
+                    $c['product'] = DB::table('product')->where('product_id', $c['product_id'])->first();
+                    $c['variant'] = DB::table('product_varient')->where('varient_id', $c['variant_id'])->first();
+                    $cartDetails[$i] = $c;
+                }
+            } elseif ($vendor->ui_type == 2 || $vendor->ui_type == 3) {
+                foreach ($cartDetails as $i=>$c) {
+                    $c['product'] = DB::table('resturant_product')->where('product_id', $c['product_id'])->first();
+                    $c['variant'] = DB::table('resturant_variant')->where('variant_id', $c['variant_id'])->first();
+                    if ($c['addons_id']) {
+                        $c['addons'] = DB::table('restaurant_addons')->whereIn('addon_id', $c['addons_id'])->get();
+                    } else {
+                        $c['addons'] = [];
+                    }
+
+                    $cartDetails[$i] = $c;
+                }
+            } elseif ($vendor->ui_type == 4) {
+                return redirect('/');
+            }
         }
 
         $response = Http::post(baseUrl('show_address'), [
@@ -139,36 +184,80 @@ class HomeController extends Controller
 
     public function order(Request $request)
     {
-        $response = Http::post(baseUrl('select_address'), [
-           'address_id' => $request->address_id
-        ]);
 
-        if ($response->ok()) {
+        $vendor_id = session()->get('vendor_id') ?? null;
 
-            $cart = session()->get('cart');
-            $data = [];
+        if ($vendor_id) {
 
-            foreach ($cart as $c) {
-                array_push($data, [
-                    'qty' => $c['qty'],
-                    'varient_id' => $c['variant_id']
-                ]);
-            }
+            $vendor = DB::table('vendor')->select('ui_type')->where('vendor_id', $vendor_id)->first();
 
-            $response = Http::post(baseUrl('order'), [
-                'user_id' => auth()->id(),
-                'vendor_id' => session()->get('vendor_id'),
-                'delivery_date' => $request->delivery_date,
-                'time_slot' => $request->time_slot,
-                'order_array' => json_encode($data)
+            $response = Http::post(baseUrl('select_address'), [
+                'address_id' => $request->address_id
             ]);
 
-            $order = $response->ok() ? $response->json('data') : [];
+            if ($response->ok()) {
 
-            return view('payment', compact('order'));
+                $cart = session()->get('cart');
+                $data = [];
+                $addons = [];
 
-        } else {
-            return redirect()->back()->with('msg', 'Address couldn\'t be selected');
+                if ($vendor->ui_type == 1) {
+                    foreach ($cart as $c) {
+                        array_push($data, [
+                            'qty' => $c['qty'],
+                            'varient_id' => $c['variant_id']
+                        ]);
+                    }
+
+                    $response = Http::post(baseUrl('order'), [
+                        'user_id' => auth()->id(),
+                        'vendor_id' => session()->get('vendor_id'),
+                        'delivery_date' => $request->delivery_date,
+                        'time_slot' => $request->time_slot,
+                        'order_array' => json_encode($data)
+                    ]);
+
+                } elseif ($vendor->ui_type == 2 || $vendor->ui_type == 3) {
+                    foreach ($cart as $c) {
+                        array_push($data, [
+                            'qty' => $c['qty'],
+                            'variant_id' => $c['variant_id']
+                        ]);
+                        if ($c['addons_id']) {
+                            foreach ($c['addons_id'] as $addon_id) {
+                                array_push($addons, [
+                                    'addon_id' => $addon_id
+                                ]);
+                            }
+                        }
+
+                    }
+
+                    if ($vendor->ui_type == 2) {
+                        $url = 'returant_order';
+                    } elseif ($vendor->ui_type == 3) {
+                        $url = 'pharmacy_order';
+                    }
+
+                    $response = Http::post(baseUrl($url), [
+                        'user_id' => auth()->id(),
+                        'vendor_id' => session()->get('vendor_id'),
+                        'order_array' => json_encode($data),
+                        'order_array1' => json_encode($addons),
+                        'ui_type' => $vendor->ui_type
+                    ]);
+
+                } elseif ($vendor->ui_type == 4) {
+                    return redirect('/');
+                }
+
+                $order = $response->ok() ? $response->json('data') : [];
+
+                return view('payment', compact('order'));
+
+            } else {
+                return redirect()->back()->with('msg', 'Address couldn\'t be selected');
+            }
         }
 
     }

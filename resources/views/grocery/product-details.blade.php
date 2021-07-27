@@ -78,7 +78,7 @@
 
                                 </div>
 
-                                <form action="{{ route('product-action', $product->product_id) }}" method="POST">
+                                <form action="{{ route('product-action', [$product->vendor_id, $product->product_id]) }}" method="POST">
                                     @csrf
                                     <div>
 

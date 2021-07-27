@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class GroceryController extends Controller
@@ -46,7 +47,16 @@ class GroceryController extends Controller
             $subCategories[$index]['products'] = $products;
         }
         $data['subCategories'] = $subCategories;
+        $data['vendor_id'] = $vendor_id;
 
         return view('grocery.products', compact('data'));
+    }
+
+    public function product_details($vendor_id, $prodId)
+    {
+        $product = DB::table('product')->where('vendor_id', $vendor_id)->where('product_id', $prodId)->first();
+        $product_variant = DB::table('product_varient')->where('product_id', $prodId)->get();
+
+        return view('grocery.product-details', compact('product', 'product_variant'));
     }
 }

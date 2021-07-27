@@ -34,22 +34,24 @@ Route::post('/user/{id}/otp-verify', [AuthController::class, 'otp_verify'])->nam
 
 Route::get('/vendor/{vendor_cat_id}/ui-type/{ui_type}/available-store', [HomeController::class, 'available_store'])->name('available-store');
 Route::get('/vendor/{vendor_id}/ui-type/{ui_type}/vendor-type', [HomeController::class, 'vendor_type'])->name('vendor-type');
-Route::get('/subcategory/{subId}/product/{prodId}', [HomeController::class, 'product_details'])->name('product-details');
-Route::post('/product-action/{prodId}', [HomeController::class, 'product_action'])->name('product-action');
+Route::post('/vendor/{vendor_id}/product-action/{prodId}', [HomeController::class, 'product_action'])->name('product-action');
 
 
 
 Route::prefix('/grocery')->group(function () {
     Route::get('/vendor/{vendor_id}/categories', [GroceryController::class, 'categories'])->name('grocery-categories');
     Route::get('/vendor/{vendor_id}/categories/{cat_id}/products', [GroceryController::class, 'products'])->name('grocery-products');
+    Route::get('/vendor/{vendor_id}/product/{prodId}', [GroceryController::class, 'product_details'])->name('grocery-product-details');
 });
 
 Route::prefix('/pharmacy')->group(function () {
     Route::get('/vendor/{vendor_id}/products', [PharmacyController::class, 'products'])->name('pharmacy-products');
+    Route::get('/vendor/{vendor_id}/product/{prodId}', [PharmacyController::class, 'product_details'])->name('pharmacy-product-details');
 });
 
 Route::prefix('/restaurant')->group(function () {
     Route::get('/vendor/{vendor_id}/products', [RestaurantController::class, 'products'])->name('restaurant-products');
+    Route::get('/vendor/{vendor_id}/product/{prodId}', [RestaurantController::class, 'product_details'])->name('restaurant-product-details');
 });
 
 

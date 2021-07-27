@@ -21,8 +21,9 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Product</th>
-                <th scope="col">Size</th>
+                <th scope="col">Size / Variation</th>
                 <th scope="col">Price</th>
+                <th scope="col">Add-Ons</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Total Amount</th>
                 <th></th>
@@ -42,12 +43,25 @@
                 </td>
                 <td>{{ $c['variant']->quantity }} {{ $c['variant']->unit }}</td>
                 <td>BDT {{ $c['variant']->price }}</td>
+                <td>
+                    <ul>
+                        @php $total_addon_price = 0; @endphp
+                        @forelse($c['addons'] as $addon)
+                            @php $total_addon_price += $addon->addon_price; @endphp
+                            <li>
+                                {{ $addon->addon_name . ' - BDT ' . $addon->addon_price }}
+                            </li>
+                        @empty
+                            N/A
+                        @endforelse
+                    </ul>
+                </td>
                 <td>{{ $c['qty'] }}</td>
                 @php
                     $total = $c['qty'] * $c['variant']->price;
-                    $sub_total += $total;
+                    $sub_total += ($total + $total_addon_price);
                  @endphp
-                <td>BDT {{ $total }}</td>
+                <td>BDT {{ $total + $total_addon_price}}</td>
                 <td>
                     <a href="{{ route('remove-cart', $c['cart_id']) }}"><i class="fa fa-trash text-danger"></i></a>
                 </td>
@@ -57,7 +71,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="4"></th>
+                    <th colspan="5"></th>
                     <th>Sub Total</th>
                     <th>BDT {{ $sub_total }}</th>
                 </tr>
