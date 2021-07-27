@@ -86,14 +86,15 @@ class HomeController extends Controller
         if ($vendor_id) {
 
             $vendor = DB::table('vendor')->select('ui_type')->where('vendor_id', $vendor_id)->first();
+            $ui_type = $vendor->ui_type;
 
-            if ($vendor->ui_type == 1) {
+            if ($ui_type == 1) {
                 foreach ($cartDetails as $i=>$c) {
                     $c['product'] = DB::table('product')->where('product_id', $c['product_id'])->first();
                     $c['variant'] = DB::table('product_varient')->where('varient_id', $c['variant_id'])->first();
                     $cartDetails[$i] = $c;
                 }
-            } elseif ($vendor->ui_type == 2 || $vendor->ui_type == 3) {
+            } elseif ($ui_type == 2 || $ui_type == 3) {
                 foreach ($cartDetails as $i=>$c) {
                     $c['product'] = DB::table('resturant_product')->where('product_id', $c['product_id'])->first();
                     $c['variant'] = DB::table('resturant_variant')->where('variant_id', $c['variant_id'])->first();
@@ -105,7 +106,7 @@ class HomeController extends Controller
 
                     $cartDetails[$i] = $c;
                 }
-            } elseif ($vendor->ui_type == 4) {
+            } elseif ($ui_type == 4) {
                 return redirect('/');
             }
 
@@ -137,14 +138,15 @@ class HomeController extends Controller
         if ($vendor_id) {
 
             $vendor = DB::table('vendor')->select('ui_type')->where('vendor_id', $vendor_id)->first();
+            $ui_type = $vendor->ui_type;
 
-            if ($vendor->ui_type == 1) {
+            if ($ui_type == 1) {
                 foreach ($cartDetails as $i=>$c) {
                     $c['product'] = DB::table('product')->where('product_id', $c['product_id'])->first();
                     $c['variant'] = DB::table('product_varient')->where('varient_id', $c['variant_id'])->first();
                     $cartDetails[$i] = $c;
                 }
-            } elseif ($vendor->ui_type == 2 || $vendor->ui_type == 3) {
+            } elseif ($ui_type == 2 || $ui_type == 3) {
                 foreach ($cartDetails as $i=>$c) {
                     $c['product'] = DB::table('resturant_product')->where('product_id', $c['product_id'])->first();
                     $c['variant'] = DB::table('resturant_variant')->where('variant_id', $c['variant_id'])->first();
@@ -156,7 +158,7 @@ class HomeController extends Controller
 
                     $cartDetails[$i] = $c;
                 }
-            } elseif ($vendor->ui_type == 4) {
+            } elseif ($ui_type == 4) {
                 return redirect('/');
             }
         }
@@ -178,7 +180,8 @@ class HomeController extends Controller
         $minDate = date('Y-m-d');
         $maxDate = date('Y-m-d', strtotime($minDate.'+9 days'));
 
-        return view('checkout', compact('cartDetails', 'address_list', 'city_list', 'checkmap', 'minDate', 'maxDate'));
+        return view('checkout', compact('cartDetails', 'address_list',
+            'city_list', 'checkmap', 'minDate', 'maxDate', 'ui_type'));
     }
 
     public function order(Request $request)
@@ -189,6 +192,7 @@ class HomeController extends Controller
         if ($vendor_id) {
 
             $vendor = DB::table('vendor')->select('ui_type')->where('vendor_id', $vendor_id)->first();
+            $ui_type = $vendor->ui_type;
 
             $response = Http::post(baseUrl('select_address'), [
                 'address_id' => $request->address_id
@@ -200,7 +204,7 @@ class HomeController extends Controller
                 $data = [];
                 $addons = [];
 
-                if ($vendor->ui_type == 1) {
+                if ($ui_type == 1) {
                     foreach ($cart as $c) {
                         array_push($data, [
                             'qty' => $c['qty'],
@@ -216,7 +220,7 @@ class HomeController extends Controller
                         'order_array' => json_encode($data)
                     ]);
 
-                } elseif ($vendor->ui_type == 2 || $vendor->ui_type == 3) {
+                } elseif ($ui_type == 2 || $ui_type == 3) {
                     foreach ($cart as $c) {
                         array_push($data, [
                             'qty' => $c['qty'],
@@ -232,9 +236,9 @@ class HomeController extends Controller
 
                     }
 
-                    if ($vendor->ui_type == 2) {
+                    if ($ui_type == 2) {
                         $url = 'returant_order';
-                    } elseif ($vendor->ui_type == 3) {
+                    } elseif ($ui_type == 3) {
                         $url = 'pharmacy_order';
                     }
 
@@ -243,10 +247,10 @@ class HomeController extends Controller
                         'vendor_id' => session()->get('vendor_id'),
                         'order_array' => json_encode($data),
                         'order_array1' => json_encode($addons),
-                        'ui_type' => $vendor->ui_type
+                        'ui_type' => $ui_type
                     ]);
 
-                } elseif ($vendor->ui_type == 4) {
+                } elseif ($ui_type == 4) {
                     return redirect('/');
                 }
 

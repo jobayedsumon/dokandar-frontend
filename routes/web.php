@@ -65,9 +65,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-Route::post('/get-area-list', [AjaxController::class, 'get_area_list']);
-Route::post('/get-time-slots', [AjaxController::class, 'get_time_slots']);
-Route::post('/get-nearby-stores', [AjaxController::class, 'get_nearby_stores']);
+Route::post('/get-area-list', [AjaxController::class, 'get_area_list'])->name('get-area-list');
+Route::post('/get-time-slots', [AjaxController::class, 'get_time_slots'])->name('get-time-slots');
+Route::post('/get-nearby-stores', [AjaxController::class, 'get_nearby_stores'])->name('get-nearby-stores');
 
 
 

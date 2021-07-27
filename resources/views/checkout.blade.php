@@ -45,6 +45,8 @@
                                 @endforelse
                             </ul>
 
+                            @if($ui_type != 2)
+
                             <div class="form-group mt-4">
                                 <label for="dateSlots">Date Slots</label>
                                 <input required type="date" min="{{ $minDate }}" max="{{ $maxDate }}" name="delivery_date" id="dateSlots">
@@ -57,6 +59,8 @@
                                 </div>
 
                             </div>
+
+                            @endif
 
                             <button type="submit" class="btn btn-danger mt-5">Confirm Order</button>
                         </form>
@@ -235,16 +239,7 @@
             console.log(err)
         }
 
-        $('#codBtn').attr('disabled', 'disabled');
-        $('#agree').click(function() {
-            if ($(this).is(':checked')) {
-                $('#payNowBtn').removeAttr('disabled');
-                $('#codBtn').removeAttr('disabled');
-            } else {
-                $('#payNowBtn').attr('disabled', 'disabled');
-                $('#codBtn').attr('disabled', 'disabled');
-            }
-        });
+
 
         $('#city').on('change', function () {
 
@@ -254,7 +249,7 @@
             }
 
             $.ajax({
-                url : "/get-area-list",
+                url : "{{ route('get-area-list') }}",
                 type: "POST",
                 data : data,
                 success: function(response, textStatus, jqXHR) {
@@ -282,7 +277,7 @@
             }
 
             $.ajax({
-                url : "/get-time-slots",
+                url : "{{ route('get-time-slots') }}",
                 type: "POST",
                 data : data,
                 success: function(response, textStatus, jqXHR) {

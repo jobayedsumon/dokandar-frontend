@@ -88,7 +88,7 @@
                 }
 
                 $.ajax({
-                    url : "/get-nearby-stores",
+                    url : "{{ route('get-nearby-stores') }}",
                     type: "POST",
                     data : data,
                     success: function(response, textStatus, jqXHR) {
