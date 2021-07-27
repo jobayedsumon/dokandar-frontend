@@ -17,7 +17,7 @@
 
     <div class="container">
 
-        <h1 class="title">Total {{ count($data['availableStore']) }} store(s) found.</h1>
+        <h1 class="title">Total <span id="storeCount">{{ count($data['availableStore']) }}</span> store(s) found.</h1>
 
         @if(session()->has('msg'))
             <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
@@ -28,7 +28,7 @@
             </div>
         @endif
 
-        <div class="row">
+        <div class="row" id="storeContainer">
 
 
             @forelse($data['availableStore'] as $availableStore)
@@ -64,4 +64,68 @@
 
 
 
+@endsection
+
+@section('script')
+    <script>
+        $(document).ready(function () {
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(success, error);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+
+            function success(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+
+                var data = {
+                    vendor_category_id: {{ $data['vendor_category_id'] }},
+                    ui_type: {{ $data['ui_type']}},
+                    lat: lat,
+                    lng: lng
+                }
+
+                $.ajax({
+                    url : "/get-nearby-stores",
+                    type: "POST",
+                    data : data,
+                    success: function(response, textStatus, jqXHR) {
+                        $('#storeCount').text(response.length);
+                        $.each(response, function (index, item) {
+
+                            var store = `<div class="col-md-6 col-lg-4 col-sm-12 column">
+                    <a href="/vendor/`+item.vendor_id+`/ui-type/{{ $data['vendorCategory']->ui_type }}/vendor-type">
+                    <div class="card">
+                        <div class="txt">
+                            <h1>`+item.vendor_name+`</h1>
+                            <p>Delivery within `+item.delivery_range+` KM from `+item.vendor_loc+`</p>
+                        </div>
+
+                        <div class="ico-card">
+                            <div class="column-overlay"></div>
+                            <img src="{{ imageBaseUrl() }}`+item.vendor_logo+`" alt="">
+                        </div>
+                    </div>
+                    </a>
+                </div>`;
+                            $('#storeContainer').append(store);
+                        });
+
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log(jqXHR);
+                        console.log(textStatus);
+                        console.log(errorThrown);
+                    }
+                });
+
+            }
+
+            function error(err) {
+                console.log(err)
+            }
+        });
+    </script>
 @endsection

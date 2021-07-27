@@ -21,4 +21,11 @@ class AjaxController extends Controller
 
         return $response->ok() ? $response->json('data') : [];
     }
+
+
+    public function get_nearby_stores(Request $request)
+    {
+        $response = Http::post(baseUrl('nearbystore'), $request->all());
+        return $response->ok() ? $response->json('data') : [];
+    }
 }

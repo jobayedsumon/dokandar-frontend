@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/get-area-list', [AjaxController::class, 'get_area_list']);
 Route::post('/get-time-slots', [AjaxController::class, 'get_time_slots']);
+Route::post('/get-nearby-stores', [AjaxController::class, 'get_nearby_stores']);
 
 
 

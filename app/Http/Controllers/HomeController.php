@@ -25,23 +25,12 @@ class HomeController extends Controller
 
     public function available_store(Request $request, $vendor_cat_id, $ui_type)
     {
-        $ip = $request->ip();
-        $location = geoip($ip);
-        $lat = $location->lat;
-        $lng = $location->lon;
-
         $vendorCategory = DB::table('vendor_category')->where('vendor_category_id', $vendor_cat_id)->first();
 
-        $response = Http::post(baseUrl('nearbystore'), [
-            'vendor_category_id' => $vendor_cat_id,
-            'ui_type' => $ui_type,
-            'lat' => $lat,
-            'lng' => $lng
-        ]);
-        $availableStore = $response->ok() ? $response->json('data') : [];
-
-        $data['availableStore'] = $availableStore;
+        $data['availableStore'] = [];
         $data['vendorCategory'] = $vendorCategory;
+        $data['vendor_category_id'] = $vendor_cat_id;
+        $data['ui_type'] = $ui_type;
 
         return view('available_store', compact('data'));
     }
