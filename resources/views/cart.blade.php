@@ -45,7 +45,9 @@
                 <td>BDT {{ $c['variant']->price }}</td>
                 <td>
                     <ul>
+
                         @php $total_addon_price = 0; @endphp
+                        @if(isset($c['addons']))
                         @forelse($c['addons'] as $addon)
                             @php $total_addon_price += $addon->addon_price; @endphp
                             <li>
@@ -54,6 +56,9 @@
                         @empty
                             N/A
                         @endforelse
+                        @else
+                            N/A
+                        @endif
                     </ul>
                 </td>
                 <td>{{ $c['qty'] }}</td>

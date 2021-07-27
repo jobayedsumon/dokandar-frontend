@@ -60,7 +60,10 @@ class HomeController extends Controller
                 return redirect()->back()->with('msg', 'Multiple vendors product can\'t be added to the cart.');
             }
         }
-        $cart = session()->get('cart');
+        $cart = session()->get('cart') ?? [];
+        if (count($cart) >= 5) {
+            return redirect()->back()->with('msg', 'Maximum 5 products can be ordered at a time.');
+        }
         $cart[] = array(
             'cart_id' => uniqid(),
             'product_id' => $prodId,
