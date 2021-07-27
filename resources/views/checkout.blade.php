@@ -76,6 +76,7 @@
                                     <small class="text-muted">(BDT {{ $c['variant']->price }} / {{ $c['variant']->quantity }} {{ $c['variant']->unit }}) x {{ $c['qty'] }}</small>
 
                                     @php $total_addon_price = 0; @endphp
+                                    @if(isset($c['addons']))
                                     @forelse($c['addons'] as $addon)
                                         @php $total_addon_price += $addon->addon_price; @endphp
                                         <br>
@@ -84,6 +85,7 @@
                                         </small>
                                     @empty
                                     @endforelse
+                                    @endif
                                 </div>
                                 @php
                                     $total = $c['qty'] * $c['variant']->price;
