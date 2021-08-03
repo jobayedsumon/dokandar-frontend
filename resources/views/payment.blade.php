@@ -22,9 +22,8 @@
                     <div class="col-6 order-md-1">
                         <h3 class="mb-3 text-lg">Select Payment Method</h3>
                         <div>
-                            <form action="{{ route('payment') }}" method="POST">
+                            <form action="{{ route('payment', $order->cart_id) }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="cart_id" value="{{ $order['cart_id'] }}">
                                 <input type="hidden" name="payment_status" value="success">
                                 <button class="btn btn-danger" type="submit" name="payment_method" value="COD">Cash On Delivery</button>
                             </form>
@@ -34,35 +33,39 @@
                         <h4 class="d-flex justify-content-between align-items-center mb-3">
                             <span class="text-lg">Coupon</span>
                         </h4>
-                        <form class="card p-2">
+                        <form class="p-2" method="POST" action="{{ route('apply-coupon', $order->cart_id) }}">
+                            @csrf
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Promo code">
+                                <input type="text" class="form-control" name="coupon_code" placeholder="Promo code" required>
                                 <div class="input-group-append">
                                     <button type="submit" class="btn btn-danger">Redeem</button>
                                 </div>
                             </div>
-{{--                            <li class="list-group-item d-flex justify-content-between bg-light mt-3">--}}
-{{--                                <div class="text-success">--}}
-{{--                                    <h6 class="my-0">Promo code</h6>--}}
-{{--                                    <small>EXAMPLECODE</small>--}}
-{{--                                </div>--}}
-{{--                                <span class="text-success">-BDT 50</span>--}}
-{{--                            </li>--}}
                         </form>
+                        @if($order->coupon_discount)
+                            <li class="list-group-item d-flex justify-content-between bg-light mt-3">
+                                <div class="text-success">
+                                    <h6 class="my-0">Promo code</h6>
+                                    <small>{{ session()->get('coupon_code') }}</small>
+                                </div>
+                                <span class="text-success">-BDT {{ $order->coupon_discount }}</span>
+                            </li>
+                        @endif
+
                         <ul class="list-group mb-3 sticky-top">
 
 
                             <li class="list-group-item d-flex justify-content-between">
                                 <span>Order Amount</span>
-                                <strong>BDT {{ $order['price_without_delivery'] }}</strong>
+                                <strong>BDT {{ $order->price_without_delivery }}</strong>
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
                                 <span>Delivery Charge</span>
-                                <strong>BDT {{ $order['delivery_charge'] }}</strong>
+                                <strong>BDT {{ $order->delivery_charge }}</strong>
                             </li>
                             <li class="list-group-item d-flex justify-content-between text-xl text-danger">
                                 <span>Payable Amount</span>
-                                <strong>BDT {{ $order['total_price'] }}</strong>
+                                <strong>BDT {{ $order->coupon_discount ? $order->rem_price : $order->total_price }}</strong>
                             </li>
                         </ul>
 
@@ -80,21 +83,6 @@
     <div>
         @include('includes.footer')
     </div>
-
-    <script>
-        $('#payNowBtn').attr('disabled', 'disabled');
-        $('#codBtn').attr('disabled', 'disabled');
-        $('#agree').click(function() {
-            if ($(this).is(':checked')) {
-                $('#payNowBtn').removeAttr('disabled');
-                $('#codBtn').removeAttr('disabled');
-            } else {
-                $('#payNowBtn').attr('disabled', 'disabled');
-                $('#codBtn').attr('disabled', 'disabled');
-            }
-        });
-    </script>
-
 
 
 @endsection

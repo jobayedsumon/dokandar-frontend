@@ -4,6 +4,7 @@ use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GroceryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PharmacyController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserController;
@@ -56,9 +57,12 @@ Route::prefix('/restaurant')->group(function () {
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout');
-    Route::post('/order', [HomeController::class, 'order'])->name('order');
-    Route::post('/payment', [HomeController::class, 'payment'])->name('payment');
+    Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+    Route::post('/order', [OrderController::class, 'order'])->name('order');
+    Route::get('/order/{cart_id}/payment', [OrderController::class, 'payment'])->name('payment');
+    Route::post('/order/{cart_id}/payment', [OrderController::class, 'payment_process'])->name('payment');
+    Route::post('/order/{cart_id}/apply-coupon', [OrderController::class, 'apply_coupon'])->name('apply-coupon');
+    Route::get('/order/{cart_id}/feedback', [OrderController::class, 'order_feedback'])->name('order-feedback');
     Route::get('/my-account', [UserController::class, 'my_account'])->name('my-account');
     Route::post('/add-address', [UserController::class, 'add_address'])->name('add-address');
     Route::get('/delete-address/{id}', [UserController::class, 'delete_address'])->name('delete-address');

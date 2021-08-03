@@ -28,7 +28,6 @@
                                         <li><a href="#dashboard" data-toggle="tab" class="nav-link active">Dashboard</a></li>
                                         <li> <a href="#orders" data-toggle="tab" class="nav-link">Orders</a></li>
                                         <li><a href="#address" data-toggle="tab" class="nav-link">Addresses</a></li>
-                                        <li><a href="#account-details" data-toggle="tab" class="nav-link">Account details</a></li>
                                         <li><a href="{{ route('logout') }}" class="nav-link">Logout</a></li>
                                     </ul>
                                 </div>
@@ -38,7 +37,7 @@
                                 <div class="tab-content dashboard_content">
                                     <div class="tab-pane fade show active" id="dashboard">
                                         <h3>Dashboard </h3>
-                                        <p>From your account dashboard. you can easily check &amp; view your <a href="#orders">recent orders</a>, manage your <a href="#address">delivery addresses</a> and <a href="#account-details">Edit your password and account details.</a></p>
+                                        <p>From your account dashboard. you can easily check &amp; view your <a href="#orders">recent orders</a>, manage your <a href="#address">delivery addresses</a></p>
                                     </div>
 
                                     <div class="tab-pane fade" id="orders">

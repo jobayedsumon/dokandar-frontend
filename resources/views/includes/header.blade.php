@@ -28,13 +28,13 @@
                         </li>
 
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bell"></i></a>
-                            <div class="dropdown-menu dropdown-menu-right dropdown-cyan" aria-labelledby="navbarDropdownMenuLink-4">
-                                <a class="dropdown-item" href="#">Facebook</a>
-                                <a class="dropdown-item" href="#">Instagram</a>
-                            </div>
-                        </li>
+{{--                        <li class="nav-item dropdown">--}}
+{{--                            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bell"></i></a>--}}
+{{--                            <div class="dropdown-menu dropdown-menu-right dropdown-cyan" aria-labelledby="navbarDropdownMenuLink-4">--}}
+{{--                                <a class="dropdown-item" href="#">Facebook</a>--}}
+{{--                                <a class="dropdown-item" href="#">Instagram</a>--}}
+{{--                            </div>--}}
+{{--                        </li>--}}
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i></a>
@@ -64,10 +64,13 @@
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #232f3e">
         <!-- Container wrapper -->
         <div class="container justify-content-center justify-content-md-between">
-            <div></div>
-            <button class="btn btn-outline-light border-white" type="button">
+            <div class="ticker">
+                <h1>Welcome to Dokandar.xyz | We deliver everything you need.</h1>
+            </div>
+            <a target="_blank" href="https://play.google.com/store/apps/details?id=xyz.dokandar.user"
+               class="btn btn-outline-light border-white btn-download">
                 Download app<i class="fa fa-download ms-2 ml-2"></i>
-            </button>
+            </a>
         </div>
         <!-- Container wrapper -->
     </nav>
