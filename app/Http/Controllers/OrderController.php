@@ -147,7 +147,7 @@ class OrderController extends Controller
                         'user_id' => auth()->id(),
                         'vendor_id' => session()->get('vendor_id'),
                         'order_array' => json_encode($data),
-                        'order_array1' => json_encode($addons),
+                        'order_array1' => $addons ? json_encode($addons) : null,
                         'ui_type' => $ui_type
                     ]);
 
