@@ -50,11 +50,10 @@ class AuthController extends Controller
         $response = Http::post(baseUrl('checkuser'), [
             'user_phone' => '+880'.$request->user_phone,
         ]);
+        $user = User::where('user_phone', '+880'.$request->user_phone)->first();
 
         if ($response->json('status') == 1) {
-            $user = User::where('user_phone', '+880'.$request->user_phone)->first();
-            Auth::login($user);
-            return redirect('/');
+            return view('verification', ['user_id'=>$user->user_id]);
         } else {
             return redirect()->back()->with('msg', $response->json('message'));
         }
