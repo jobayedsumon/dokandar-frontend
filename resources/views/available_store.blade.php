@@ -92,10 +92,13 @@
                     type: "POST",
                     data : data,
                     success: function(response, textStatus, jqXHR) {
+                        console.log(response);
                         $('#storeCount').text(response.length);
                         $.each(response, function (index, item) {
 
-                            var store = `<div class="col-md-6 col-lg-4 col-sm-12 column">
+                            if (item.online_status != 'off') {
+
+                                var store = `<div class="col-md-6 col-lg-4 col-sm-12 column">
                     <a href="/vendor/`+item.vendor_id+`/ui-type/{{ $data['vendorCategory']->ui_type }}/vendor-type">
                     <div class="card">
                         <div class="txt">
@@ -110,7 +113,28 @@
                     </div>
                     </a>
                 </div>`;
+
+                            } else {
+                                var store = `<div class="col-md-6 col-lg-4 col-sm-12 column">
+                    <a class="disabled" href="javascript:void(0)">
+                    <div class="card vendorOffline">
+                        <div class="txt">
+                            <h1>`+item.vendor_name+`</h1>
+                            <h3 class="bg-danger mt-2 text-2xl text-white pl-2">Store is closed now!</h3>
+                            <p>Delivery within `+item.delivery_range+` KM from `+item.vendor_loc+`</p>
+                        </div>
+
+                        <div class="ico-card">
+                            <div class="column-overlay"></div>
+                            <img src="{{ imageBaseUrl() }}`+item.vendor_logo+`" alt="">
+                        </div>
+                    </div>
+                    </a>
+                </div>`;
+                            }
+
                             $('#storeContainer').append(store);
+
                         });
 
                     },

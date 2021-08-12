@@ -89,13 +89,13 @@ class HomeController extends Controller
             $ui_type = $vendor->ui_type;
 
             if ($ui_type == 1) {
-                foreach ($cartDetails as $i=>$c) {
+                foreach ($cartDetails as $i => $c) {
                     $c['product'] = DB::table('product')->where('product_id', $c['product_id'])->first();
                     $c['variant'] = DB::table('product_varient')->where('varient_id', $c['variant_id'])->first();
                     $cartDetails[$i] = $c;
                 }
             } elseif ($ui_type == 2 || $ui_type == 3) {
-                foreach ($cartDetails as $i=>$c) {
+                foreach ($cartDetails as $i => $c) {
                     $c['product'] = DB::table('resturant_product')->where('product_id', $c['product_id'])->first();
                     $c['variant'] = DB::table('resturant_variant')->where('variant_id', $c['variant_id'])->first();
                     if ($c['addons_id']) {
