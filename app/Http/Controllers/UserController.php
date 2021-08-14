@@ -65,4 +65,46 @@ class UserController extends Controller
         ]);
         return $response->ok() ? redirect()->back()->with('msg', $response->json('message')) : redirect()->back()->with('msg', 'Address couldn\'t be deleted');
     }
+
+    public function order_details($cart_id)
+    {
+        $ongoing = DB::table('orders')
+            ->leftJoin('delivery_boy', 'orders.dboy_id', '=', 'delivery_boy.delivery_boy_id')
+            ->join('vendor','orders.vendor_id','=','vendor.vendor_id')
+            ->join('user_address','orders.address_id','=','user_address.address_id')
+            ->where('orders.cart_id',$cart_id)
+            ->first();
+
+
+        if($ongoing){
+
+            if ($ongoing->ui_type == 1) {
+                $order = DB::table('order_details')
+                    ->leftJoin('product_varient', 'order_details.varient_id','=','product_varient.varient_id')
+                    ->select('order_details.*','product_varient.*')
+                    ->where('order_details.order_cart_id',$ongoing->cart_id)
+                    ->orderBy('order_details.order_date', 'DESC')
+                    ->get();
+            } else {
+
+                $order = DB::table('order_details')
+                    ->leftjoin('resturant_variant', 'order_details.varient_id', '=', 'resturant_variant.variant_id')
+                    ->select('order_details.*', 'resturant_variant.*')
+                    ->where('order_details.order_cart_id',$ongoing->cart_id)
+                    ->orderBy('order_details.order_date', 'DESC')
+                    ->get();
+            }
+
+
+            $data=array('order_status'=>$ongoing->order_status,'vendor_name'=>$ongoing->vendor_name, 'order_date'=>$ongoing->order_date, 'delivery_date'=>$ongoing->delivery_date, 'time_slot'=>$ongoing->time_slot,'payment_method'=>$ongoing->payment_method,'payment_status'=>$ongoing->payment_status,'paid_by_wallet'=>$ongoing->paid_by_wallet, 'cart_id'=>$ongoing->cart_id ,'price'=>$ongoing->total_price,'delivery_charge'=>$ongoing->delivery_charge,'remaining_amount'=>$ongoing->rem_price,'coupon_discount'=>$ongoing->coupon_discount,'delivery_boy_name'=>$ongoing->delivery_boy_name,'delivery_boy_phone'=>$ongoing->delivery_boy_phone,
+                'address'=>$ongoing->address,'details'=>$order);
+        }
+        else {
+            $data = [];
+        }
+
+            //dd($data);
+
+        return view('order-details', compact('data'));
+    }
 }

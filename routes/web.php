@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/order/{cart_id}/apply-coupon', [OrderController::class, 'apply_coupon'])->name('apply-coupon');
     Route::get('/order/{cart_id}/feedback', [OrderController::class, 'order_feedback'])->name('order-feedback');
     Route::get('/my-account', [UserController::class, 'my_account'])->name('my-account');
+    Route::get('/order-details/{cart_id}', [UserController::class, 'order_details'])->name('order-details');
     Route::post('/add-address', [UserController::class, 'add_address'])->name('add-address');
     Route::get('/delete-address/{id}', [UserController::class, 'delete_address'])->name('delete-address');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

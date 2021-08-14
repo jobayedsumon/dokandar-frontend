@@ -799,9 +799,8 @@ a {
 }
 
 .dashboard-list .nav-link:hover, .dashboard-list .nav-link.active {
-    background-color: #fff;
-    color: #ff3547;
-    border: 1px solid #ff3547;
+    background-color: #232F3E;
+    color: #fff;
 }
 
 .order_info {
