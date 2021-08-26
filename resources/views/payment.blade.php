@@ -26,6 +26,7 @@
                                 @csrf
                                 <input type="hidden" name="payment_status" value="success">
                                 <button class="btn btn-danger" type="submit" name="payment_method" value="COD">Cash On Delivery</button>
+                                <button class="btn btn-danger" type="submit" name="payment_method" value="ONLINE">ONLINE PAYMENT</button>
                             </form>
                         </div>
                     </div>

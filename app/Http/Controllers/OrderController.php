@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 
 class OrderController extends Controller
 {
@@ -172,20 +174,75 @@ class OrderController extends Controller
 
     public function payment_process(Request $request, $cart_id)
     {
-        $response = Http::post(baseUrl('checkout'), [
-            'cart_id' => $cart_id,
-            'payment_method' => $request->payment_method
-        ]);
+        if ($request->payment_method == 'COD') {
+            $response = Http::post(baseUrl('checkout'), [
+                'cart_id' => $cart_id,
+                'payment_method' => $request->payment_method
+            ]);
+            $order = $response->ok() ? $response->json('data') : [];
 
-        $order = $response->ok() ? $response->json('data') : [];
+            if ($order) {
+                session()->remove('cart');
+                session()->remove('vendor_id');
+                session()->remove('coupon_code');
+                return redirect(route('order-feedback', $order['cart_id']));
+            } else {
+                redirect()->back()->with('msg', 'Payment couldn\'t be completed');
+            }
 
-        if ($order) {
-            session()->remove('cart');
-            session()->remove('vendor_id');
-            session()->remove('coupon_code');
-            return redirect(route('order-feedback', $order['cart_id']));
-        } else {
-            redirect()->back()->with('msg', 'Payment couldn\'t be completed');
+        } else if($request->payment_method == 'ONLINE') {
+
+            $orderData = DB::table('orders')->where('cart_id', $cart_id)->first();
+            $customer = DB::table('tbl_user')->where('user_id', $orderData->user_id)->first();
+            $address = DB::table('user_address')->where('address_id', $orderData->address_id)->first();
+
+            $url = 'https://sandbox.aamarpay.com/request.php'; // live url https://secure.aamarpay.com/request.php
+            $fields = array(
+                'store_id' => env('STORE_ID'), //store id will be aamarpay,  contact integration@aamarpay.com for test/live id
+                'amount' => $orderData->rem_price, //transaction amount
+                'payment_type' => 'VISA', //no need to change
+                'currency' => 'BDT',  //currenct will be USD/BDT
+                'tran_id' => $orderData->cart_id, //transaction id must be unique from your end
+                'cus_name' => $customer->user_name,  //customer name
+                'cus_email' => $customer->user_email, //customer email address
+                'cus_add1' => $address->address,  //customer address
+                'cus_add2' => $address->street, //customer address
+                'cus_city' => $address->state,  //customer city
+                'cus_state' => $address->state,  //state
+                'cus_postcode' => $address->pincode, //postcode or zipcode
+                'cus_country' => 'Bangladesh',  //country
+                'cus_phone' => $customer->user_phone, //customer phone number
+                'cus_fax' => 'Not¬Applicable',  //fax
+                'ship_name' => $customer->user_name, //ship name
+                'ship_add1' => $address->address,  //ship address
+                'ship_add2' => $address->street,
+                'ship_city' => $address->state,
+                'ship_state' => $address->state,
+                'ship_postcode' => $address->pincode,
+                'ship_country' => 'Bangladesh',
+                'desc' => 'ORDER ID: '.$orderData->cart_id,
+                'success_url' => route('success'), //your success route
+                'fail_url' => route('fail'), //your fail route
+                'cancel_url' => route('cancel'), //your cancel url
+                'opt_a' => '',  //optional paramter
+                'opt_b' => '',
+                'opt_c' => '',
+                'opt_d' => '',
+                'signature_key' => env('SIGNATURE_KEY')); //signature key will provided aamarpay, contact integration@aamarpay.com for test/live signature key
+
+            $fields_string = http_build_query($fields);
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_VERBOSE, true);
+            curl_setopt($ch, CURLOPT_URL, $url);
+
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            $url_forward = str_replace('"', '', stripslashes(curl_exec($ch)));
+            curl_close($ch);
+
+            $this->redirect_to_merchant($url_forward);
         }
 
     }
@@ -200,5 +257,50 @@ class OrderController extends Controller
     {
         $order = DB::table('orders')->where('cart_id', $cart_id)->first();
         return view('order-feedback', compact('order'));
+    }
+
+    function redirect_to_merchant($url) {
+
+        ?>
+        <html xmlns="http://www.w3.org/1999/xhtml">
+        <head><script type="text/javascript">
+                function closethisasap() { document.forms["redirectpost"].submit(); }
+            </script></head>
+        <body onLoad="closethisasap();">
+
+        <form name="redirectpost" method="post" action="<?php echo 'https://sandbox.aamarpay.com/'.$url; ?>"></form>
+        <!-- for live url https://secure.aamarpay.com -->
+        </body>
+        </html>
+        <?php
+        exit;
+    }
+
+
+    public function success(Request $request){
+        Session::save();
+        $response = Http::post(baseUrl('checkout'), [
+            'cart_id' => $request->mer_txnid,
+            'payment_method' => $request->card_type,
+            'payment_status' => 'success'
+        ]);
+        $order = $response->ok() ? $response->json('data') : [];
+
+        if ($order) {
+            session()->remove('cart');
+            session()->remove('vendor_id');
+            session()->remove('coupon_code');
+            return redirect(route('order-feedback', $order['cart_id']));
+        } else {
+            redirect()->back()->with('msg', 'Payment couldn\'t be completed');
+        }
+    }
+
+    public function fail(Request $request){
+        redirect()->back()->with('msg', 'Payment couldn\'t be completed');
+    }
+
+    public function cancel(Request $request){
+        redirect()->back()->with('msg', 'Payment was cancelled');
     }
 }

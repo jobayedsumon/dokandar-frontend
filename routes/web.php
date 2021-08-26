@@ -10,6 +10,7 @@ use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -68,7 +69,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/add-address', [UserController::class, 'add_address'])->name('add-address');
     Route::get('/delete-address/{id}', [UserController::class, 'delete_address'])->name('delete-address');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
 });
+
+Route::post('/success',[OrderController::class, 'success'])->name('success');
+Route::post('/fail',[OrderController::class, 'fail'])->name('fail');
+Route::post('/cancel',[OrderController::class, 'cancel'])->name('cancel');
 
 Route::post('/get-area-list', [AjaxController::class, 'get_area_list'])->name('get-area-list');
 Route::post('/get-time-slots', [AjaxController::class, 'get_time_slots'])->name('get-time-slots');
