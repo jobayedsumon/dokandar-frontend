@@ -196,7 +196,7 @@ class OrderController extends Controller
             $customer = DB::table('tbl_user')->where('user_id', $orderData->user_id)->first();
             $address = DB::table('user_address')->where('address_id', $orderData->address_id)->first();
 
-            $url = 'https://sandbox.aamarpay.com/request.php'; // live url https://secure.aamarpay.com/request.php
+            $url = env('PAYMENT_URL').'request.php'; // live url https://secure.aamarpay.com/request.php
             $fields = array(
                 'store_id' => env('STORE_ID'), //store id will be aamarpay,  contact integration@aamarpay.com for test/live id
                 'amount' => $orderData->rem_price, //transaction amount
@@ -268,7 +268,7 @@ class OrderController extends Controller
             </script></head>
         <body onLoad="closethisasap();">
 
-        <form name="redirectpost" method="post" action="<?php echo 'https://sandbox.aamarpay.com/'.$url; ?>"></form>
+        <form name="redirectpost" method="post" action="<?php echo env('PAYMENT_URL').$url; ?>"></form>
         <!-- for live url https://secure.aamarpay.com -->
         </body>
         </html>
