@@ -297,10 +297,12 @@ class OrderController extends Controller
     }
 
     public function fail(Request $request){
+        return 'Payment couldn\'t be completed';
         redirect()->back()->with('msg', 'Payment couldn\'t be completed');
     }
 
     public function cancel(Request $request){
+        return 'Payment was cancelled';
         redirect()->back()->with('msg', 'Payment was cancelled');
     }
 }
