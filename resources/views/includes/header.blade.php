@@ -67,7 +67,7 @@
             <div class="ticker">
                 <h1>Welcome to Dokandar.xyz | We deliver everything you need.</h1>
             </div>
-            <a target="_blank" href="https://play.google.com/store/apps/details?id=xyz.dokandar.user"
+            <a target="_blank" download href="{{ asset('Dokandar_xyz.apk') }}"
                class="btn btn-outline-light border-white btn-download">
                 Download app<i class="fa fa-download ms-2 ml-2"></i>
             </a>
