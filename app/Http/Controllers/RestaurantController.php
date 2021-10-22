@@ -22,10 +22,15 @@ class RestaurantController extends Controller
         ]);
 
         $categories = $response->ok() ? $response->json('data') : [];
+
+
         $restaurantCats = [];
 
         foreach($categories as $key => $value){
-            $restaurantCats[$value['resturant_cat_id']][$key] = $value;
+            if (array_key_exists('resturant_cat_id', $value)) {
+                $restaurantCats[$value['resturant_cat_id']][$key] = $value;
+            }
+
         }
 
         $restaurantCats = array_values($restaurantCats);
